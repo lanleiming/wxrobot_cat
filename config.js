@@ -1,7 +1,8 @@
 var config = {
     robot_wxid :'wxid_4extv9dqmuvs22',//机器人微信id
+    master_wxid:['wxid_3548925461015','wxid_4extv9dqmuvs22'],//管理员微信id
     sendUrl:'http://127.0.0.1:8073/send',//发送信息的接口url
-    helpTxt:'',
+    helpTxt:'', //所有的口令
     //发送的消息类型
     sendType:{
         txt:100,//文本
@@ -38,11 +39,8 @@ function initHelpTxt(){
     config.helpTxt += '10006  链接转二维码\r';
     config.helpTxt += '10007  口令转二维码\r';
     
-}
-   
+}   
 initHelpTxt();
-
-
 
 
 

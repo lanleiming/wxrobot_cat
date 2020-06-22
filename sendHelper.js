@@ -1,8 +1,6 @@
 //发送消息
 var request = require("request");
 
-var config = require('./config.js');
-
 //post请求
 var postData={
     type:config.sendType.txt,

@@ -2,7 +2,6 @@
 //todolist
 //每个modal必备的参数及方法：   __body,keys,__initKeys()
 var sendHelper = require('../sendHelper.js');
-var config = require('../config.js');
 
 function Helper(body){
     this.__body =body;
