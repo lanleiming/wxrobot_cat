@@ -1,24 +1,23 @@
 //node模块引用
-var express = require('express');
+var express = require("express");
 var request = require("request");
 
 //公共js
-var Common = require('./common.js');
+var Common = require("./common.js");
 global.Common = Common;
 
 //总的配置文件
-var config = require('./config.js');
+var config = require("./config.js");
 global.config = config;
 
 //云存储
-const AV = require('leancloud-storage');
+const AV = require("leancloud-storage");
 global.AV = AV;
 AV.init({
-    appId: "HpN52gtlYPVpz0zPl2gxIBPj-gzGzoHsz",
-    appKey: "GR8uqVRyGU1l7VjWOO8Mpd18",
-    serverURL: "https://hpn52gtl.lc-cn-n1-shared.com"
+  appId: "HpN52gtlYPVpz0zPl2gxIBPj-gzGzoHsz",
+  appKey: "GR8uqVRyGU1l7VjWOO8Mpd18",
+  serverURL: "https://hpn52gtl.lc-cn-n1-shared.com",
 });
-
 
 // var query = new AV.Query('tb_user');
 // query.equalTo('uname', '十二');
@@ -28,7 +27,6 @@ AV.init({
 //   // error is an instance of AVError.
 // });
 
-
 // const tb_User = AV.Object.extend('tb_user');
 // const cuser = new tb_User();
 // cuser.set('wxid', '123123');
@@ -37,11 +35,9 @@ AV.init({
 //     console.log(res);
 // })
 
-
-
-var DB = require('./cloud/database.js');
-var tb_user = require('./cloud/tb_user.js');
-var tb_todolist = require('./cloud/tb_todolist.js');
+var DB = require("./cloud/database.js");
+var tb_user = require("./cloud/tb_user.js");
+var tb_todolist = require("./cloud/tb_todolist.js");
 
 // tb_user.getCuserByMsg({
 //     type: '100',
@@ -53,45 +49,47 @@ var tb_todolist = require('./cloud/tb_todolist.js');
 //   robot_wxid: 'wxid_4extv9dqmuvs22',
 //   msg: '1',
 //   time: '1592405720',
-//   rid: '11502' 
+//   rid: '11502'
 // }).then(res=>{
 //     console.log(res);
- 
-   
-// })
 
+// })
 
 // var query = new AV.Query('tb_todolist');
 // query.equalTo('tTime',new Date(new Date().setHours(0,0,0,0)).toString() );
 // query.find().then(res=>{
 //     console.log(res.length);
-    
+
 // }).catch(err=>{
 //     console.log(err);
 // });
+// for (var i = 0; i < 5; i++) {
+//   tb_todolist
+//     .insertItem({
+//       u_wxid: "123123",
+//       uname: "测试",
+//       tTime: new Date(),
+//       content: "睡觉" + i,
+//       ttype: "生活",
+//     })
+//     .then((res) => {
+//       console.log(res);
+//     });
+// }
 
-
-
-// tb_todolist.insertItem({
-//     u_wxid:'123123',
-//     uname:'测试',
-//     tTime:new Date(new Date().setHours(0,0,0,0)).toString(),
-//     content:'睡觉',
-//     ttype:'生活'
-// }).then(res=>{
-//     console.log(res);
-// });
-
-
+tb_todolist.getListByDate("123123", new Date()).then((res) => {
+  console.log(res);
+});
 
 var app = express();
-var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({
-    extended:true
-}));
+var bodyParser = require("body-parser");
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
-var txtHandler = require('./txtHandler.js');	
-
+var txtHandler = require("./txtHandler.js");
 
 // app.post('/', function(req, res){
 //      console.log(req.body);
@@ -102,15 +100,3 @@ var txtHandler = require('./txtHandler.js');
 // });
 
 // app.listen(3000);
-
-
-
-
-
-
-
-
-
-
-
-
