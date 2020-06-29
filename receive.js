@@ -19,22 +19,6 @@ AV.init({
   serverURL: "https://hpn52gtl.lc-cn-n1-shared.com",
 });
 
-// var query = new AV.Query('tb_user');
-// query.equalTo('uname', '十二');
-// query.find().then(function(results) {
-//   console.log(results[0]._serverData);
-// }, function(error) {
-//   // error is an instance of AVError.
-// });
-
-// const tb_User = AV.Object.extend('tb_user');
-// const cuser = new tb_User();
-// cuser.set('wxid', '123123');
-// cuser.set('uname', '123123');
-// cuser.save().then(res=>{
-//     console.log(res);
-// })
-
 var DB = require("./cloud/database.js");
 var tb_user = require("./cloud/tb_user.js");
 var tb_todolist = require("./cloud/tb_todolist.js");
@@ -77,9 +61,9 @@ var tb_todolist = require("./cloud/tb_todolist.js");
 //     });
 // }
 
-tb_todolist.getListByDate("123123", new Date()).then((res) => {
-  console.log(res);
-});
+// tb_todolist.getListByDate("123123", new Date()).then((res) => {
+//   console.log(res);
+// });
 
 var app = express();
 var bodyParser = require("body-parser");
@@ -90,6 +74,32 @@ app.use(
 );
 
 var txtHandler = require("./txtHandler.js");
+
+// new txtHandler({
+//   type: "100",
+//   msg_type: "1",
+//   from_wxid: "wxid_354892546111016",
+//   final_from_wxid: "wxid_3548925461015",
+//   from_name: "测试人",
+//   final_from_name: "雷明?????? ",
+//   robot_wxid: "wxid_4extv9dqmuvs22",
+//   msg: "查看#本周",
+//   time: "1592405720",
+//   rid: "11502",
+// });
+
+new txtHandler({
+  type: "100",
+  msg_type: "1",
+  from_wxid: "wxid_354892546111016",
+  final_from_wxid: "wxid_3548925461015",
+  from_name: "测试人",
+  final_from_name: "雷明?????? ",
+  robot_wxid: "wxid_4extv9dqmuvs22",
+  msg: "查看#本周", //"新增:20200702#任务三20200630",
+  time: "1592405720",
+  rid: "11502",
+});
 
 // app.post('/', function(req, res){
 //      console.log(req.body);

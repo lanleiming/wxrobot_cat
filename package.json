@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node receive.js",
     "task": "node autotask/autotask.js",
-    "start": "node receive.js & node autotask/autotask.js"
+    "start": "node receive.js & node autotask/autotask.js",
+    "tree": "tree /f >tree.txt"
   },
   "author": "",
   "license": "ISC",
