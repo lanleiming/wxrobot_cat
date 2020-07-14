@@ -35,7 +35,7 @@ function initHelpTxt() {
 
   config.helpTxt += "回复对应的数字，获取操作步骤\r";
   config.helpTxt +=
-    "[红包][红包][红包][红包][红包][红包][红包][红包][红包][红包]\r";
+    "[红包][红包][红包][红包][红包][红包][红包][红包]\r";
   config.helpTxt += "12345  todolist介绍\r";
   config.helpTxt += "10000  新增任务\r";
   config.helpTxt += "10001  删除任务\r";
