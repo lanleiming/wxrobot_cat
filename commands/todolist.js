@@ -319,6 +319,7 @@ ToDoList.prototype = {
             msg = "操作失败，请联系管理员！";
           }
       }
+      console.log(11111);
       console.log(msg);
       sendHelper.sendTxt(this.from_wxid, msg);
     }
