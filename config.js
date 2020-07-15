@@ -20,6 +20,7 @@ var config = {
   //收到的消息类型
   msgType: {
     txt: 1, //文本
+    card: 42, //名片
   },
   //操作数据库，回调状态
   DB_Code: {
