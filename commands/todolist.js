@@ -5,7 +5,6 @@ var tb_user = require("../cloud/tb_user.js");
 var tb_todolist = require("../cloud/tb_todolist.js");
 const Common = require("../common.js");
 const config = require("../config.js");
-const e = require("express");
 
 function ToDoList(body) {
   this.__body = body;
@@ -27,6 +26,9 @@ ToDoList.prototype = {
   cuser: null,
   //发消息的人
   from_wxid: "",
+  initMsg(body){
+
+  },
   __initKeys: function () {
     this.keys = {
       新增: this.add.bind(this),
@@ -172,12 +174,15 @@ ToDoList.prototype = {
       #13   任务一
       #15   任务一
       */
+     
       var res = null;
+      var title = '今天';
       if (index == -1) {
         //当天
         res = await tb_todolist.getListByDate(this.from_wxid, new Date());
       } else {
         var params = txt.slice(index + 1);
+        title = params;
         if (["明天", "本周", "上周"].indexOf(params) > -1) {
           switch (params) {
             case "明天":
@@ -209,18 +214,25 @@ ToDoList.prototype = {
       }
       if (res) {
         if (res.errno == config.DB_Code.ok) {
-          //msg += "〓〓〓〓 " + txt.slice(index + 1) + "任务 〓〓〓〓\r";
-          for (var i = 0; i < res.data.length; i++) {
-            let item = res.data[i];
-            msg +=
-              "#" +
-              item.tid +
-              "\t" +
-              item.content +
-              "\t" +
-              new Date(item.tTime).toLocaleDateString() +
-              "\n";
-          }
+         
+          var list1 = res.data.filter((item, index, arr)=>{
+             return item.isCompleted ==1
+          })  
+         var list0 = res.data.filter((item, index, arr)=>{
+            return item.isCompleted !=1
+         })  
+
+        
+         if(list0 && list0.length>0){
+            msg += "〓〓〓 " + title + "未完成任务 〓〓〓\n";
+            msg += renderList(list0,false);
+            msg+= '\n\n';
+         }
+         if(list1 && list1.length>0){
+            msg += "〓〓〓 " + title + "已完成任务 〓〓〓\n";
+            msg += renderList(list1,true);
+         } 
+
         } else if (res.errno == config.DB_Code.notFound) {
           msg = "当前没有任务，请添加！";
         } else {
@@ -230,6 +242,24 @@ ToDoList.prototype = {
       console.log(msg);
       sendHelper.sendTxt(this.from_wxid, msg);
     }
+    function renderList(list,isOk){
+        var msg = '';
+        for(var key in list){
+            let item = list[key];
+            if(isOk){
+                msg += '[@emoji=\\u2705]';
+            }else{
+                msg += '[@emoji=\\u274E]';
+            }
+            msg +=
+            "『" +
+            item.tid +
+            "』\t" +
+            item.content +
+            "\n";
+        }
+        return msg;
+    }
   },
   //完成任务
   async complete(key) {
@@ -237,6 +267,7 @@ ToDoList.prototype = {
     // 完成:1h#任务编号
     // 完成:1分钟#任务内容（模糊匹配）
     // 完成:生活#任务内容（模糊匹配）
+    // 完成:1小时:生活#任务内容（模糊匹配）
     if (await this.checkUserRule()) {
       //检测：指令是否符合要求
       var txt = this.__body.msg.trim();
@@ -244,12 +275,77 @@ ToDoList.prototype = {
       var index = txt.indexOf("#");
       if (index < 0 || index == txt.length - 1) {
         msg = "指令有误！";
-      }
+      }else{
+        var res = null;
+        var txt1 = txt.slice(0, index);
+        var txt2 = txt.slice(index + 1);
+        var item_todolist ={
+            u_wxid:this.from_wxid
+        } 
+        //处理完成时间 & 分类
+        var txt1_arr = txt1.split(/[:：]/);
+        if(txt1_arr.length==2 || txt1_arr.length==3){
+            let hour = getHour(txt1_arr[1]);
+            if(txt1_arr.length==3 && hour==''){
+                msg = '指令错误！正确格式【完成:小时:分类#任务】';
+            }else{
+                if(hour==''){
+                    //分类
+                    item_todolist.ttype = txt1_arr[1];
+                }else{
+                    //h
+                    item_todolist.finishHour = hour;
+                }
+                if(txt1_arr.length==3){
+                    item_todolist.ttype = txt1_arr[2];
+                }
+            }
+        }
 
+        if (!isNaN(txt2)) {
+            //编号
+            item_todolist.tid = +txt2;
+            res =await tb_todolist.completedItemById(item_todolist);
+        }else{
+            //内容
+            item_todolist.content = txt2;
+            res =await tb_todolist.completedItemByText(item_todolist);
+        }
+        if (res.errno == config.DB_Code.ok) {
+            msg = "操作成功！";
+          } else if (res.errno == config.DB_Code.notFound) {
+            msg = "操作失败，任务不存在！";
+          } else {
+            msg = "操作失败，请联系管理员！";
+          }
+      }
       console.log(msg);
       sendHelper.sendTxt(this.from_wxid, msg);
     }
+
+    function getHour(txt){
+        txt = txt.toLocaleLowerCase();
+        var num = parseFloat(txt);
+        //未含有数字
+        if(isNaN(num)){
+            return '';
+        }
+        //检测是否为小时
+        var arr_hour = ['小时','时','h'];
+        for(var key in arr_hour){
+           if(txt.indexOf(arr_hour[key]) > -1){
+                return num;
+           }
+        }
+        //检测是否为分钟
+        var arr_minutes = ['分','分钟','min','m'];
+        for(var key in arr_minutes){
+            if(txt.indexOf(arr_minutes[key]) > -1){
+                 return parseFloat((num/60).toFixed(2));
+            }
+         }
+    }
+
   },
 };
-
 module.exports = ToDoList;

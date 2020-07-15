@@ -14,11 +14,12 @@ TxtHandler.prototype = {
   __body: null,
   commands: [], //指令中心
   init() {
-    if (this.commands.length == 0) {
-      //加载不同的指令modal
-      this._addKeys(ToDoList);
-      this._addKeys(Helper);
-    }
+
+    //加载不同的指令modal
+    this.commands = [];
+    this._addKeys(ToDoList);
+    this._addKeys(Helper);
+  
     //机器人发给自己的消息，不做处理
     if (this.__body.from_wxid == this.__body.robot_wxid) {
       return;

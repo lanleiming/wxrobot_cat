@@ -16,13 +16,13 @@ var tb_ToDoList = {
     });
   },
   //完成一条任务：任务编号
-  completedItemById({ tid, u_wxid, finishHour }) {
+  completedItemById({ tid, u_wxid, finishHour,ttype }) {
     //根据 任务id + 微信id，查数据
     return new Promise((resolve, reject) => {
       tb_ToDoList.__queryItemById({ tid, u_wxid }).then((res) => {
         if (res.errno == config.DB_Code.ok) {
           //查到相关数据
-          tb_ToDoList.__completedItem(res.data, finishHour).then((res1) => {
+          tb_ToDoList.__completedItem(res.data, {finishHour,ttype}).then((res1) => {
             resolve(res1);
           });
         } else {
@@ -33,13 +33,13 @@ var tb_ToDoList = {
     });
   },
   //完成一条任务：任务内容
-  completedItemByText({ content, u_wxid, finishHour }) {
+  completedItemByText({ content, u_wxid, finishHour,ttype }) {
     //根据内容，模糊匹配，查询用户当天的任务exists
     return new Promise((resolve, reject) => {
       tb_ToDoList.__queryItemByText({ content, u_wxid }).then((res) => {
         if (res.errno == config.DB_Code.ok) {
           //查到相关数据
-          tb_ToDoList.__completedItem(res.data, finishHour).then((res1) => {
+          tb_ToDoList.__completedItem(res.data, {finishHour,ttype}).then((res1) => {
             resolve(res1);
           });
         } else {
@@ -159,15 +159,17 @@ var tb_ToDoList = {
         });
     });
   },
-  __completedItem(res, finishHour) {
+  __completedItem(res, {finishHour,ttype}) {
     return new Promise((resolve, reject) => {
       //查到相关数据
       var item = res;
       item.isCompleted = 1;
       item.finishHour = finishHour ? finishHour : 0;
+      item.ttype = ttype!='' ? ttype :item.ttype ;
+      item.tTime = new Date(item.tTime);
       DB.updataItem("tb_todolist", item)
         .then((res1) => {
-          resolve(Common.resolveObj(res1.data.toJSON(), config.DB_Code.ok));
+          resolve(res1);
         })
         .catch((err) => {
           resolve(Common.resolveObj(err, config.DB_Code.internalError));
